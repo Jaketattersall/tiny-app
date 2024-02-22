@@ -1,0 +1,26 @@
+app.post('/login', (req, res) => {
+    const { email, password } = req.body;
+
+    // Look up user by email
+    const user = getUserByEmail(email);
+
+    // Check if user exists and if password is correct
+    if (!user || user.password !== password) {
+        return res.status(403).send("Invalid email or password");
+    }
+
+    // Set user_id cookie with the matching user's ID
+    res.cookie('user_id', user.id);
+
+    // Redirect to /urls
+    res.redirect('/urls');
+});
+
+
+app.post('/logout', (req, res) => {
+    // Clear user_id cookie
+    res.clearCookie('user_id');
+
+    // Redirect to /login
+    res.redirect('/login');
+});
