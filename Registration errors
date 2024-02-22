@@ -1,0 +1,39 @@
+app.post('/register', (req, res) => {
+  const { email, password } = req.body;
+  
+  // Check if email or password is empty
+  if (!email || !password) {
+    return res.status(400).send("Email and password are required");
+  }
+
+  // Check if email already exists in users database
+  if (getUserByEmail(email)) {
+    return res.status(400).send("Email already exists");
+  }
+
+  // Generate a random user ID
+  const userId = generateRandomString();
+
+  // Add the new user to the users object
+  users[userId] = {
+    id: userId,
+    email,
+    password
+  };
+
+  // Set user_id cookie containing the user's ID
+  res.cookie('user_id', userId);
+
+  // Redirect to the /urls page
+  res.redirect('/urls');
+});
+
+// Helper function to find a user by email
+function getUserByEmail(email) {
+  for (const userId in users) {
+    if (users[userId].email === email) {
+      return users[userId];
+    }
+  }
+  return null;
+}
