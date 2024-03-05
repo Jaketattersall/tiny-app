@@ -1,46 +1,61 @@
-// helpers.js
-const getUserByEmail = function(email, database) {
-    for (const userID in database) {
-        const user = database[userID];
-        if (user.email === email) {
-            return user;
-        }
-    }
-    return undefined;
-};
 
-const generateRandomString = () => {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (let i = 0; i < 6; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
+const getUserByEmail = (email, userDatabase) => { // helper function for user lookup through email address
+    for (const user in userDatabase) {
+      if (userDatabase[user].email === email) {
+        return userDatabase[user]; // returns the user with matching email address
+      }
     }
-    return result;
+    return undefined; // return undefined for an email not present in database
+  }
+  
+  const urlsForUser = (userId, urlDatabase) => {
+    const userUrls = {};
+    for (const urlShortId in urlDatabase) {
+      if (urlDatabase[urlShortId].userID === userId) {
+        userUrls[urlShortId] = urlDatabase[urlShortId];
+      }
+    }
+    return userUrls; // returns the URLs where the userID is equal to the id of the currently logged-in user.
+  }; 
+  
+  const doesUserOwnUrl = (userId, urlShortId, urlDatabase) => {
+    userUrls = urlsForUser(userId, urlDatabase );
+    for (const userUrl in userUrls) {
+      if (userUrl === urlShortId) {
+        return true
+      }
+    }
+    return false;
   };
-
-const urlsForUser = (db, id) => {
-    const database = {}
-    console.log(db)
-    console.log(id)
-    for (const url in db) {
-        console.log(db[url])
-        console.log(db[url].id === id)
-        if (db[url].userID === id) {
-            database[url] = db[url];
-        }
+  
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const generateRandomString = () => { // generate shorturl/id string of 6 alphanumeric charcters   
+    let id = '';
+    for (let i = 0; i < 6; i++) {
+      id += chars[Math.floor(Math.random() * chars.length)];
     }
-    return database;
-}
-
-
-
-module.exports = { getUserByEmail, generateRandomString, urlsForUser };
-
-
-
-
-
-
-
-
-
+    return id;
+  };
+  
+  const isUserLoggedIn = (req) => {
+    if (req.session.user_id)
+      return true;
+    else
+      return false;
+  };
+  
+  const doesShortUrlExists = (urlShortId, urlDatabase) => {
+    if (urlDatabase.hasOwnProperty(urlShortId))
+      return true
+    else
+      return false
+  };
+  
+  module.exports = {
+    getUserByEmail,
+    urlsForUser,
+    doesUserOwnUrl,
+    generateRandomString,
+    isUserLoggedIn,
+    doesShortUrlExists
+  }; // export helper functions

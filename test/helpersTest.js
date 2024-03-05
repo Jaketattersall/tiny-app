@@ -1,29 +1,30 @@
-// test/helpersTest.js
 const { assert } = require('chai');
-const { getUserByEmail } = require('../helpers');
 
-const testUsers = {
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+const { getUserByEmail } = require('../helpers.js');
+
+const userDB = {
+  'A': {
+    id: 'user1',
+    email: 'user1@mail.com',
+    password: 'user1'
   },
-  "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
+  'B': {
+    id: 'user2',
+    email: 'user2@mail.com',
+    password: 'user2'
   }
 };
 
-describe('getUserByEmail', function() {
-  it('should return a user with valid email', function() {
-    const user = getUserByEmail("user@example.com", testUsers);
-    const expectedUserID = "userRandomID";
-    assert.equal(user.id, expectedUserID);
+describe('getUserByEmail', () => {
+  it('should return a user with a valid email', () => {
+    const actual = getUserByEmail('user1@mail.com', userDB); // returns user object 'A'
+    const expected = userDB.A;
+    assert.equal(actual, expected);
   });
 
-  it('should return undefined for a non-existent email', function() {
-    const user = getUserByEmail("nonexistent@example.com", testUsers);
-    assert.isUndefined(user);
+  it('should return undefined with a non existing email', () => {
+    const actual = getUserByEmail('nouser@mail.com', userDB); // returns undefined
+    const expected = undefined;
+    assert.equal(actual, expected);
   });
 });
